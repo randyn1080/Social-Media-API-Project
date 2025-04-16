@@ -30,6 +30,19 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account login(Account account) {
+        if (account.getUsername() == null ||
+                account.getUsername().isBlank() ||
+                account.getPassword() == null ||
+                account.getPassword().isBlank()) {
+            return null;
+        }
+
+        Account existingAccount = accountDAO.getAccountByUsername(account.getUsername());
+
+        if (existingAccount != null && existingAccount.getPassword().equals(account.getPassword())) {
+            return existingAccount;
+        }
+
         return null;
     }
     

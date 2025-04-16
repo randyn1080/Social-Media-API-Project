@@ -34,7 +34,7 @@ public class SocialMediaController {
         app.get("/messages/{message_id}", this::getMessageById);
         app.delete("/messages/{message_id}", this::deleteMessage);
         app.patch("/messages/{message_id}", this::updateMessage);
-        app.get("/accounts/{account_id}", this::getMessagesByUser);
+        app.get("/accounts/{account_id}/messages", this::getMessagesByUser);
 
         return app;
     }
@@ -67,6 +67,17 @@ public class SocialMediaController {
     }
 
     private void login(Context ctx) {
+        try {
+            Account account = ctx.bodyAsClass(Account.class);
+            Account loggedInAccount = accountService.login(account);
+            if (loggedInAccount != null) {
+                ctx.json(loggedInAccount);
+            } else {
+                ctx.status(401);
+            }
+        } catch (Exception e) {
+            ctx.status(401).result("Error logging in: " + e.getMessage());
+        }
     }
 
     private void createMessage(Context ctx) {
