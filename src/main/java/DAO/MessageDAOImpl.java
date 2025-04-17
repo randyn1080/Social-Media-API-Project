@@ -34,12 +34,83 @@ public class MessageDAOImpl implements MessageDAO{
             }
         } catch (SQLException e) {
             //TODO: handle exception
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+
+            if (pstmt != null) {
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
         }
         return null;
     }
 
     @Override
     public Message getMessageById(int msgId) {
+        String sql = "SELECT * FROM message WHERE message_id = ?;";
+
+        Connection connection = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            connection = ConnectionUtil.getConnection();
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, msgId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                Message message = new Message();
+                message.setMessage_id(msgId);
+                message.setPosted_by(rs.getInt("posted_by"));
+                message.setMessage_text(rs.getString("message_text"));
+                message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+                return message;
+            }
+
+        } catch (SQLException e) {
+            //TODO: handle exception
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+            if (pstmt != null) {
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+        }
+
         return null;
     }
 

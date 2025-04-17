@@ -32,7 +32,7 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     public Message getMessageById(int msgId) {
-        return null;
+        return messageDAO.getMessageById(msgId);
     }
 
     @Override
