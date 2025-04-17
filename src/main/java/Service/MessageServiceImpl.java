@@ -52,7 +52,7 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     public Boolean deleteMessage(int msgId) {
-        return false;
+        return messageDAO.deleteMessage(msgId);
     }
     
 }

@@ -178,6 +178,37 @@ public class MessageDAOImpl implements MessageDAO{
 
     @Override
     public Boolean deleteMessage(int msgId) {
+        String sql = "DELETE FROM message WHERE message_id = ?;";
+        Connection connection = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            connection = ConnectionUtil.getConnection();
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, msgId);
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            //TODO: handle exception
+        } finally {
+            if (pstmt != null) {
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+        }
+
         return false;
     }
     
