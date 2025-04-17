@@ -172,8 +172,42 @@ public class MessageDAOImpl implements MessageDAO{
     }
 
     @Override
-    public Boolean updateMessage(Message message) {
-        return false;
+    public Message updateMessageText(int msgId, String newText) {
+        String sql = "UPDATE message SET message_text = ? WHERE message_id = ?;";
+        Connection connection = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            connection = ConnectionUtil.getConnection();
+            pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, newText);
+            pstmt.setInt(2, msgId);
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                return getMessageById(msgId);
+            }
+
+        } catch (SQLException e) {
+            //TODO: handle exception
+        } finally {
+            if (pstmt != null) {
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    // TODO: handle exception
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override

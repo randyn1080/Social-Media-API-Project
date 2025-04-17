@@ -46,8 +46,19 @@ public class MessageServiceImpl implements MessageService{
     }
 
     @Override
-    public Boolean updateMessage(Message message) {
-        return false;
+    public Message updateMessageText(int msgId, String newText) {
+        Message currentMessage = messageDAO.getMessageById(msgId);
+        if (currentMessage == null) {
+            return null;
+        }
+
+        if (newText == null ||
+                newText.isBlank() ||
+                newText.length() > 255) {
+            return null;
+        }
+
+        return messageDAO.updateMessageText(msgId, newText);
     }
 
     @Override

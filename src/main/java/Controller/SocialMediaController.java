@@ -120,6 +120,16 @@ public class SocialMediaController {
     }
 
     private void updateMessage(Context ctx) {
+        int msgId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message messageUpdate = ctx.bodyAsClass(Message.class);
+
+        Message updatedMessage = messageService.updateMessageText(msgId, messageUpdate.getMessage_text());
+
+        if (updatedMessage != null) {
+            ctx.json(updatedMessage);
+        } else {
+            ctx.status(400);
+        }
     }
 
     private void getMessagesByUser(Context ctx) {
