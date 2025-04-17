@@ -4,6 +4,6 @@ import Model.Account;
 
 public interface AccountDAO {
     Account createAccount(Account account);
-    Account getAccountById(int id);
+    Account getAccountById(int accountId);
     Account getAccountByUsername(String username);
 }

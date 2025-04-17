@@ -1,8 +1,11 @@
 package Controller;
 
 import Model.Account;
+import Model.Message;
 import Service.AccountService;
 import Service.AccountServiceImpl;
+import Service.MessageService;
+import Service.MessageServiceImpl;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -13,9 +16,11 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
     private final AccountService accountService;
+    private final MessageService messageService;
 
     public SocialMediaController() {
         this.accountService = new AccountServiceImpl();
+        this.messageService = new MessageServiceImpl();
     }
 
     /**
@@ -25,7 +30,6 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
 
         app.post("/register", this::registerUser);
         app.post("/login", this::login);
@@ -37,14 +41,6 @@ public class SocialMediaController {
         app.get("/accounts/{account_id}/messages", this::getMessagesByUser);
 
         return app;
-    }
-
-    /**
-     * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
-     */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
     }
 
     private void registerUser(Context ctx) {
@@ -81,6 +77,17 @@ public class SocialMediaController {
     }
 
     private void createMessage(Context ctx) {
+        try {
+            Message message = ctx.bodyAsClass(Message.class);
+            Message validMessage = messageService.createMessage(message);
+            if (validMessage != null) {
+                ctx.json(validMessage);
+            } else {
+                ctx.status(400);
+            }
+        } catch (Exception e) {
+            ctx.status(400).result("Error creating message: " + e.getMessage());
+        }
     }
 
     private void getAllMessages(Context ctx) {
