@@ -1,5 +1,7 @@
 package Controller;
 
+import java.util.List;
+
 import Model.Account;
 import Model.Message;
 import Service.AccountService;
@@ -91,6 +93,8 @@ public class SocialMediaController {
     }
 
     private void getAllMessages(Context ctx) {
+        List<Message> messages = messageService.getAllMessages();
+        ctx.json(messages);
     }
 
     private void getMessageById(Context ctx) {

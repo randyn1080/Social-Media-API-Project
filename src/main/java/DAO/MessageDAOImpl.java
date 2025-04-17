@@ -2,6 +2,7 @@ package DAO;
 
 import java.sql.*;
 import java.util.List;
+import java.util.ArrayList;
 
 import Model.Message;
 import Util.ConnectionUtil;
@@ -44,7 +45,54 @@ public class MessageDAOImpl implements MessageDAO{
 
     @Override
     public List<Message> getAllMessages() {
-        return null;
+        String sql = "SELECT * FROM message;";
+        Connection connection = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+
+        List<Message> messages = new ArrayList<>();
+
+        try {
+            connection = ConnectionUtil.getConnection();
+            stmt = connection.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                Message message = new Message();
+                message.setMessage_id(rs.getInt("message_id"));
+                message.setPosted_by(rs.getInt("posted_by"));
+                message.setMessage_text(rs.getString("message_text"));
+                message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+                messages.add(message);
+            }
+        } catch (SQLException e) {
+            //TODO: handle exception
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    //TODO: handle exception
+                }
+            }
+        }
+        return messages;
     }
 
     @Override
