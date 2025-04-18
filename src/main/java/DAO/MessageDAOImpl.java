@@ -257,7 +257,7 @@ public class MessageDAOImpl implements MessageDAO{
     }
 
     @Override
-    public Boolean deleteMessage(int msgId) {
+    public Message deleteMessage(int msgId) {
         String sql = "DELETE FROM message WHERE message_id = ?;";
         Connection connection = null;
         PreparedStatement pstmt = null;
@@ -266,9 +266,12 @@ public class MessageDAOImpl implements MessageDAO{
             connection = ConnectionUtil.getConnection();
             pstmt = connection.prepareStatement(sql);
             pstmt.setInt(1, msgId);
+
+            Message deletedMessage = getMessageById(msgId);
+
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
-                return true;
+                return deletedMessage;
             }
         } catch (SQLException e) {
             //TODO: handle exception
@@ -289,7 +292,7 @@ public class MessageDAOImpl implements MessageDAO{
             }
         }
 
-        return false;
+        return null;
     }
     
 }

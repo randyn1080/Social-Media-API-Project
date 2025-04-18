@@ -9,5 +9,5 @@ public interface MessageDAO {
     List<Message> getAllMessages();
     List<Message> getAllMessagesByAccountId(int accountId);
     Message updateMessageText(int msgId, String newText);
-    Boolean deleteMessage(int msgId);
+    Message deleteMessage(int msgId);
 }

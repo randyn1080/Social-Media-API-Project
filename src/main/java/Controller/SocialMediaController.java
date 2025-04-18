@@ -1,6 +1,7 @@
 package Controller;
 
 import java.util.List;
+import java.util.Objects;
 
 import Model.Account;
 import Model.Message;
@@ -47,13 +48,10 @@ public class SocialMediaController {
 
     private void registerUser(Context ctx) {
         try {
-            // parse JSON from the request body into account object
             Account account = ctx.bodyAsClass(Account.class);
 
-            // call service method, which houses validation
             Account registeredAccount = accountService.registerUser(account);
 
-            // if an account is not null, return it as JSON
             if (registeredAccount != null) {
                 ctx.json(registeredAccount);
             } else {
@@ -110,13 +108,8 @@ public class SocialMediaController {
 
     private void deleteMessage(Context ctx) {
         int messageId = Integer.parseInt(ctx.pathParam("message_id"));
-        Message messageToDelete = messageService.getMessageById(messageId);
-        boolean deleted = messageService.deleteMessage(messageId);
-        if (deleted) {
-            ctx.json(messageToDelete);
-        } else {
-            ctx.json("");
-        }
+        Message deletedMessage = messageService.deleteMessage(messageId);
+        ctx.json(Objects.requireNonNullElse(deletedMessage, ""));
     }
 
     private void updateMessage(Context ctx) {
