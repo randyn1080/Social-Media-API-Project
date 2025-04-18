@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import Model.Message;
 import Util.ConnectionUtil;
+import Util.DatabaseUtil;
 
 public class MessageDAOImpl implements MessageDAO{
 
@@ -35,29 +36,9 @@ public class MessageDAOImpl implements MessageDAO{
         } catch (SQLException e) {
             //TODO: handle exception
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
+            DatabaseUtil.closeResource(rs);
+            DatabaseUtil.closeResource(pstmt);
+            DatabaseUtil.closeResource(connection);
         }
         return null;
     }
@@ -88,27 +69,9 @@ public class MessageDAOImpl implements MessageDAO{
         } catch (SQLException e) {
             //TODO: handle exception
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
+            DatabaseUtil.closeResource(rs);
+            DatabaseUtil.closeResource(pstmt);
+            DatabaseUtil.closeResource(connection);
         }
 
         return null;
@@ -139,29 +102,9 @@ public class MessageDAOImpl implements MessageDAO{
         } catch (SQLException e) {
             //TODO: handle exception
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
+            DatabaseUtil.closeResource(rs);
+            DatabaseUtil.closeResource(stmt);
+            DatabaseUtil.closeResource(connection);
         }
         return messages;
     }
@@ -192,27 +135,9 @@ public class MessageDAOImpl implements MessageDAO{
         } catch (SQLException e) {
             //TODO: handle exception
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
+            DatabaseUtil.closeResource(rs);
+            DatabaseUtil.closeResource(pstmt);
+            DatabaseUtil.closeResource(connection);
         }
         return messages;
     }
@@ -237,20 +162,8 @@ public class MessageDAOImpl implements MessageDAO{
         } catch (SQLException e) {
             //TODO: handle exception
         } finally {
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    // TODO: handle exception
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
+            DatabaseUtil.closeResource(pstmt);
+            DatabaseUtil.closeResource(connection);
         }
 
         return null;
@@ -276,20 +189,8 @@ public class MessageDAOImpl implements MessageDAO{
         } catch (SQLException e) {
             //TODO: handle exception
         } finally {
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
+            DatabaseUtil.closeResource(pstmt);
+            DatabaseUtil.closeResource(connection);
         }
 
         return null;

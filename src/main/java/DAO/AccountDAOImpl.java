@@ -4,6 +4,7 @@ import java.sql.*;
 
 import Model.Account;
 import Util.ConnectionUtil;
+import Util.DatabaseUtil;
 
 public class AccountDAOImpl implements AccountDAO {
 
@@ -33,27 +34,9 @@ public class AccountDAOImpl implements AccountDAO {
         } catch (SQLException e) {
             //TODO: handle exception
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (pstmt != null){
-                try {
-                    pstmt.close();
-                } catch(SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
+            DatabaseUtil.closeResource(rs);
+            DatabaseUtil.closeResource(pstmt);
+            DatabaseUtil.closeResource(connection);
         }
 
         return null;
@@ -83,27 +66,9 @@ public class AccountDAOImpl implements AccountDAO {
         } catch (SQLException e) {
             //TODO: handle exception
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch(SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
+            DatabaseUtil.closeResource(rs);
+            DatabaseUtil.closeResource(pstmt);
+            DatabaseUtil.closeResource(connection);
         }
 
         return null;
@@ -133,27 +98,9 @@ public class AccountDAOImpl implements AccountDAO {
         } catch (SQLException e) {
             //TODO: handle exception
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    //TODO: handle exception
-                }
-            }
+            DatabaseUtil.closeResource(rs);
+            DatabaseUtil.closeResource(pstmt);
+            DatabaseUtil.closeResource(connection);
         }
 
         return null;
