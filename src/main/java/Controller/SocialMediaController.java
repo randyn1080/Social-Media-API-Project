@@ -11,6 +11,8 @@ import Service.MessageService;
 import Service.MessageServiceImpl;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Controller class to handle social media functionalities, including
@@ -21,6 +23,7 @@ import io.javalin.http.Context;
  * interacts with the underlying services for business logic execution.
  */
 public class SocialMediaController {
+    private static final Logger logger = LoggerFactory.getLogger(SocialMediaController.class);
     /**
      * The AccountService and MessageService instances will be injected into the controller.
      */
@@ -33,6 +36,7 @@ public class SocialMediaController {
     public SocialMediaController() {
         this.accountService = new AccountServiceImpl();
         this.messageService = new MessageServiceImpl();
+        logger.info("Social Media Controller started");
     }
 
     /**
@@ -54,6 +58,8 @@ public class SocialMediaController {
     public Javalin startAPI() {
         Javalin app = Javalin.create();
 
+        logger.info("Configuring API endpoints");
+
         app.post("/register", this::registerUser);
         app.post("/login", this::login);
         app.post("/messages", this::createMessage);
@@ -63,6 +69,7 @@ public class SocialMediaController {
         app.patch("/messages/{message_id}", this::updateMessage);
         app.get("/accounts/{account_id}/messages", this::getMessagesByUser);
 
+        logger.info("API endpoints configured successfully");
         return app;
     }
 
@@ -79,43 +86,50 @@ public class SocialMediaController {
      * - 400 Bad Request: Registration failed (username blank, password too short, or username already exists)
      */
     private void registerUser(Context ctx) {
+        logger.info("Received request: POST /register");
         try {
             Account account = ctx.bodyAsClass(Account.class);
 
             Account registeredAccount = accountService.registerUser(account);
 
             if (registeredAccount != null) {
+                logger.info("Registration successful for user ID: {}", registeredAccount.getAccount_id());
                 ctx.json(registeredAccount);
             } else {
                 ctx.status(400);
             }
         } catch (Exception e) {
+            logger.error("Error during registration: {}", e.getMessage());
             ctx.status(400).result("Error registering user: " + e.getMessage());
         }
     }
 
     /**
      * Handles user login requests.
-            *
-            * Endpoint: POST /login
+     *
+     * Endpoint: POST /login
      * Request Body: JSON representation of an Account (without account_id)
      *
-             * @param ctx The Javalin context for this request
+     * @param ctx The Javalin context for this request
      *
-             * Response Codes:
-            * - 200 OK: Login successful, returns the Account with account_id
+     * Response Codes:
+     * - 200 OK: Login successful, returns the Account with account_id
      * - 401 Unauthorized: Login failed (username or password incorrect)
      */
     private void login(Context ctx) {
+        logger.info("Received request: POST /login");
         try {
             Account account = ctx.bodyAsClass(Account.class);
             Account loggedInAccount = accountService.login(account);
             if (loggedInAccount != null) {
+                logger.info("Login successful for user ID: {}", loggedInAccount.getAccount_id());
                 ctx.json(loggedInAccount);
             } else {
+                logger.warn("Login failed");
                 ctx.status(401);
             }
         } catch (Exception e) {
+            logger.error("Error during login: {}", e.getMessage());
             ctx.status(401).result("Error logging in: " + e.getMessage());
         }
     }
@@ -133,15 +147,19 @@ public class SocialMediaController {
      * - 400 Bad Request: Message creation failed (message_text blank or too long, or posted_by user doesn't exist)
      */
     private void createMessage(Context ctx) {
+        logger.info("Received request: POST /messages");
         try {
             Message message = ctx.bodyAsClass(Message.class);
             Message validMessage = messageService.createMessage(message);
             if (validMessage != null) {
+                logger.info("Message created successfully for user ID: {}", validMessage.getPosted_by());
                 ctx.json(validMessage);
             } else {
+                logger.warn("Message creation failed");
                 ctx.status(400);
             }
         } catch (Exception e) {
+            logger.error("Error during message creation: {}", e.getMessage());
             ctx.status(400).result("Error creating message: " + e.getMessage());
         }
     }
@@ -157,6 +175,7 @@ public class SocialMediaController {
      * - 200 OK: Returns a JSON array of all messages (empty array if no messages exist)
      */
     private void getAllMessages(Context ctx) {
+        logger.info("Received request: GET /messages");
         List<Message> messages = messageService.getAllMessages();
         ctx.json(messages);
 
@@ -176,9 +195,12 @@ public class SocialMediaController {
     private void getMessageById(Context ctx) {
         try {
             int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+            logger.info("Received request: GET /messages/{}", messageId);
             Message message = messageService.getMessageById(messageId);
+
             ctx.json(Objects.requireNonNullElse(message, ""));
         } catch (Exception e) {
+            logger.error("Error retrieving message: {}", e.getMessage());
             ctx.json("");
         }
 
@@ -198,9 +220,11 @@ public class SocialMediaController {
     private void deleteMessage(Context ctx) {
         try {
             int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+            logger.info("Received request: DELETE /messages/{}", messageId);
             Message deletedMessage = messageService.deleteMessage(messageId);
             ctx.json(Objects.requireNonNullElse(deletedMessage, ""));
         } catch (Exception e) {
+            logger.error("Error deleting message: {}", e.getMessage());
             ctx.json("");
         }
 
@@ -222,18 +246,24 @@ public class SocialMediaController {
     private void updateMessage(Context ctx) {
         try {
             int msgId = Integer.parseInt(ctx.pathParam("message_id"));
+            logger.info("Received request: PATCH /messages/{}", msgId);
+
             Message messageUpdate = ctx.bodyAsClass(Message.class);
 
             Message updatedMessage = messageService.updateMessageText(msgId, messageUpdate.getMessage_text());
 
             if (updatedMessage != null) {
+                logger.info("Message updated successfully for user ID: {}", updatedMessage.getPosted_by());
                 ctx.json(updatedMessage);
             } else {
+                logger.warn("Message update failed for ID: {}", msgId);
                 ctx.status(400);
             }
         } catch (NumberFormatException e) {
+            logger.error("Invalid message ID format: {}", ctx.pathParam("message_id"));
             ctx.status(400).result("Invalid message ID format: " + e.getMessage());
         } catch (Exception e) {
+            logger.error("Error updating message: {}", e.getMessage());
             ctx.status(400).result("Error updating message: " + e.getMessage());
         }
 
@@ -254,10 +284,13 @@ public class SocialMediaController {
     private void getMessagesByUser(Context ctx) {
         try {
             int accountId = Integer.parseInt(ctx.pathParam("account_id"));
+            logger.info("Received request: GET /accounts/{}/messages", accountId);
+
             List<Message> messages = messageService.getAllMessagesByAccountId(accountId);
 
             ctx.json(messages);
         } catch (Exception e) {
+            logger.error("Error retrieving messages by user: {}", e.getMessage());
             ctx.json(List.<Message>of());
         }
 

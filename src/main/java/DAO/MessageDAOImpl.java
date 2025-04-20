@@ -8,7 +8,11 @@ import Model.Message;
 import Util.ConnectionUtil;
 import Util.DatabaseUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MessageDAOImpl implements MessageDAO{
+    private static final Logger logger = LoggerFactory.getLogger(MessageDAOImpl.class);
 
     @Override
     public Message createMessage(Message msg) {
@@ -31,10 +35,11 @@ public class MessageDAOImpl implements MessageDAO{
             if (rs.next()) {
                 int generatedMessageId = rs.getInt(1);
                 msg.setMessage_id(generatedMessageId);
+                logger.info("Message created with id: {} by user: {}", generatedMessageId, msg.getPosted_by());
                 return msg;
             }
         } catch (SQLException e) {
-            //TODO: handle exception
+            logger.error("Error creating message: {}", e.getMessage());
         } finally {
             DatabaseUtil.closeResource(rs);
             DatabaseUtil.closeResource(pstmt);
@@ -63,11 +68,12 @@ public class MessageDAOImpl implements MessageDAO{
                 message.setPosted_by(rs.getInt("posted_by"));
                 message.setMessage_text(rs.getString("message_text"));
                 message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+                logger.info("Retrieved message with ID: {}", msgId);
                 return message;
             }
 
         } catch (SQLException e) {
-            //TODO: handle exception
+            logger.error("Error retrieving message with ID {}: {}", msgId, e.getMessage());
         } finally {
             DatabaseUtil.closeResource(rs);
             DatabaseUtil.closeResource(pstmt);
@@ -99,8 +105,9 @@ public class MessageDAOImpl implements MessageDAO{
                 message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
                 messages.add(message);
             }
+            logger.info("Retrieved {} messages", messages.size());
         } catch (SQLException e) {
-            //TODO: handle exception
+            logger.error("Error retrieving all messages: {}", e.getMessage());
         } finally {
             DatabaseUtil.closeResource(rs);
             DatabaseUtil.closeResource(stmt);
@@ -132,8 +139,9 @@ public class MessageDAOImpl implements MessageDAO{
                 message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
                 messages.add(message);
             }
+            logger.info("Retrieved {} messages for account with ID: {}", messages.size(), accountId);
         } catch (SQLException e) {
-            //TODO: handle exception
+            logger.error("Error retrieving all messages for account with ID {}: {}", accountId, e.getMessage());
         } finally {
             DatabaseUtil.closeResource(rs);
             DatabaseUtil.closeResource(pstmt);
@@ -156,11 +164,12 @@ public class MessageDAOImpl implements MessageDAO{
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
+                logger.info("Updated message text for message with ID: {}", msgId);
                 return getMessageById(msgId);
             }
 
         } catch (SQLException e) {
-            //TODO: handle exception
+            logger.error("Error updating message text for message with ID {}: {}", msgId, e.getMessage());
         } finally {
             DatabaseUtil.closeResource(pstmt);
             DatabaseUtil.closeResource(connection);
@@ -184,10 +193,11 @@ public class MessageDAOImpl implements MessageDAO{
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
+                logger.info("Deleted message with ID: {}", msgId);
                 return deletedMessage;
             }
         } catch (SQLException e) {
-            //TODO: handle exception
+            logger.error("Error deleting message with ID {}: {}", msgId, e.getMessage());
         } finally {
             DatabaseUtil.closeResource(pstmt);
             DatabaseUtil.closeResource(connection);
@@ -195,5 +205,5 @@ public class MessageDAOImpl implements MessageDAO{
 
         return null;
     }
-    
+
 }
