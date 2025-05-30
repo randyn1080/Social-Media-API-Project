@@ -41,6 +41,7 @@ To-do list:
 
 ### Clone the repository
 git clone https://github.com/randyn1080/Social-Media-API-Project.git
+
 cd Social-Media-API-Project
 
 ### Windows Setup
